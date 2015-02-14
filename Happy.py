@@ -13,11 +13,11 @@ import sys
 #    os.system("bash -c '%s'" % script)
 
 #Dateipfad
-#path='/home/emanuel/Dropbox/Programmieren/Python/'
+path='/home/emanuel/Dropbox/Programmieren/Python/'
 
-path='/home/emanuel/Git/Hub/Happy/'
-filename='TestData'
-#filename='Daten_Happy'
+#path='/home/emanuel/Git/Hub/Happy/'
+#filename='TestData'
+filename='Daten_Happy'
 #Parameter
 now = datetime.datetime.now()
 happy=-1		#subjektiv happines in % , 100% = very happy 
@@ -84,6 +84,7 @@ def WriteData():		#ungetestet, geht wsl nicht
 	
 	
 #Programm zum auslesen der Daten
+#Ausgabe: endval[index], index: 0=happy,1=health,2=stress,3=sporty,4=money,5=social,6=year,7=month,8=day,9=hour,10=minute,11=second
 def Read():
 	text = open(path+filename,'r')	#open file to read
 	data = text.read()		#safe file to string
@@ -149,8 +150,9 @@ def Timestamps (endval):				#transform Date segments into string list of datetim
 	print timearr
 	return timearr
 #Plotprogramme
-def plotdata(index,endval):
-	
+def plotdata(index,endval,row,col,num,title):
+	plot=plt.subplot(row,col,num)
+	plt.title(title)
 	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S") for d in Timestamps(endval)]
 	print x
 	#x=np.linspace(0,len(endval[0]),len(endval[0]))
@@ -159,22 +161,50 @@ def plotdata(index,endval):
 	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))
 	plt.plot(x,endval[index])
 	plt.gcf().autofmt_xdate()
-	plt.show()
-
+#	plt.show()
+	return plot
 
 #Ausfuehrung des Programmes
-#print sys.argv[1]
+#Optionen: 
+#               -all ... alle Daten einlesen
+#               -h ... nur happy wert einlesen
+#               -he ... health einlesen
+#               -st ... stress einlesen
+#               -sp ... sporty einlesen
+#               -m ... money einlesen
+#               -so ... social einlesen
+#               -plot -[option] ... plotmodus [option] gibt zu plotende daten an
+#                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
+#               - 
 
+#print sys.argv[1]
+plotarguments=["-h","-he","-st","-sp","-m","-so","-all"]
+#try sys.argv[1]
 if len(sys.argv)==1:
 	(happy,health,stress,sporty,money,social)=Input("a")
 	WriteData()
 	endval=Read()
-	plotdata(1,endval)
-elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
-	(happy,health,stress,sporty,money,social)=Input("a")
-	WriteData()
-	endval=Read()
-	plotdata(int(sys.argv[1]),endval)
-	
+elif sys.argv[1] == "plot":
+#		try sys.argv[2]
+		endval=Read()
+		if sys.argv[2] == "-all":
+			i=0
+			while i < 6:
+				plotdata(i,endval,6,1,i+1,plotarguments[i])
+				i+=1
+		else:
+			argindex=plotarguments.index(sys.argv[2])
+			plotdata(argindex,endval,1,1,1,plotarguments[argindex])
 else:
-	print "Falsches argument"
+	print "wrong argument"
+#		except NameError:
+#			print "wrong second argument"
+#			sys.exit()
+#elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
+#	(happy,health,stress,sporty,money,social)=Input("a")
+#	WriteData()
+#	endval=Read()
+#	plotdata(int(sys.argv[1]),endval)
+plt.show()
+#except NameError:
+#	print "Falsches argument"
