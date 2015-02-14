@@ -1,7 +1,8 @@
 import os				
 import datetime
 import numpy as np
-import matplotlib.pyplot as plt  
+import matplotlib.pyplot as plt 
+import matplotlib 
 #das i/o Getue geht so wie hier beschrieben: https://docs.python.org/2/tutorial/inputoutput.html
 # supercoole Scientific software fuer Python: SciPy ... numpy und matplotlib sind da auch drinnen
 
@@ -11,8 +12,9 @@ import matplotlib.pyplot as plt
 #    os.system("bash -c '%s'" % script)
 
 #Dateipfad
-path='/home/emanuel/Dropbox/Programmieren/Python/'
-filename='Daten_Happy'
+#path='/home/emanuel/Dropbox/Programmieren/Python/'
+path='/home/emanuel/Git/Hub/Happy/'
+filename='TestData'
 #Parameter
 now = datetime.datetime.now()
 happy=-1		#subjektiv happines in % , 100% = very happy 
@@ -116,8 +118,7 @@ def Read():
 		rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
 	if len(rowvalues) == datalen:
 		values.append(rowvalues)				#Zeile anfuegen
-										#wenn neue zeile
-			
+									#wenn neue zeile
 	print values
 	mesure=[]
 	endval=[]
@@ -133,11 +134,29 @@ def Read():
 		mesure=[]
 		ii+=1
 	print endval
-	return endval
+	return endval					#return all the data in an array that has list in it as follows: [happy,health,stress,sport,money,social,year,month,day,hour,minute,second]
+
+
+def Timestamps (endval):				#transform Date segments into string list of datetimes ["datetime","datetime",...] for example ["2002:1:2:14:23:12",...]
+	i=0
+	timearr=[]
+	for x in endval[6]:
+		timearr.append(str(endval[6][i])+":"+str(endval[7][i])+":"+str(endval[8][i])+":"+str(endval[9][i])+":"+str(endval[10][i])+":"+str(endval[11][i]))
+		i+=1
+	print timearr
+	return timearr
 #Plotprogramme
-def plotdata(index):
-	x=np.linspace(0,len(endval[0]),len(endval[0]))
+def plotdata(index,endval):
+	
+	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S").date() for d in Timestamps(endval)]
+	print x
+	#x=np.linspace(0,len(endval[0]),len(endval[0]))
+#	plt.gca().set_major_locator(matplotlib.dates.DayLocator())
+#	plt.gca().set_minor_locator(matplotlib.dates.HourLocator(arange(0,25,6)))
+#	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))
+	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))
 	plt.plot(x,endval[index])
+	plt.gcf().autofmt_xdate()
 	plt.show()
 
 
@@ -145,4 +164,4 @@ def plotdata(index):
 (happy,health,stress,sporty,money,social)=Input("a")
 WriteData()
 endval=Read()
-plotdata(0)
+plotdata(0,endval)
