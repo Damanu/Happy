@@ -148,12 +148,11 @@ def Timestamps (endval):				#transform Date segments into string list of datetim
 #Plotprogramme
 def plotdata(index,endval):
 	
-	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S").date() for d in Timestamps(endval)]
+	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S") for d in Timestamps(endval)]
 	print x
 	#x=np.linspace(0,len(endval[0]),len(endval[0]))
 #	plt.gca().set_major_locator(matplotlib.dates.DayLocator())
 #	plt.gca().set_minor_locator(matplotlib.dates.HourLocator(arange(0,25,6)))
-#	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))
 	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))
 	plt.plot(x,endval[index])
 	plt.gcf().autofmt_xdate()
