@@ -3,6 +3,7 @@ import datetime
 import numpy as np
 import matplotlib.pyplot as plt 
 import matplotlib 
+import sys
 #das i/o Getue geht so wie hier beschrieben: https://docs.python.org/2/tutorial/inputoutput.html
 # supercoole Scientific software fuer Python: SciPy ... numpy und matplotlib sind da auch drinnen
 
@@ -13,8 +14,10 @@ import matplotlib
 
 #Dateipfad
 #path='/home/emanuel/Dropbox/Programmieren/Python/'
+
 path='/home/emanuel/Git/Hub/Happy/'
 filename='TestData'
+#filename='Daten_Happy'
 #Parameter
 now = datetime.datetime.now()
 happy=-1		#subjektiv happines in % , 100% = very happy 
@@ -160,7 +163,18 @@ def plotdata(index,endval):
 
 
 #Ausfuehrung des Programmes
-(happy,health,stress,sporty,money,social)=Input("a")
-WriteData()
-endval=Read()
-plotdata(0,endval)
+#print sys.argv[1]
+
+if len(sys.argv)==1:
+	(happy,health,stress,sporty,money,social)=Input("a")
+	WriteData()
+	endval=Read()
+	plotdata(1,endval)
+elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
+	(happy,health,stress,sporty,money,social)=Input("a")
+	WriteData()
+	endval=Read()
+	plotdata(int(sys.argv[1]),endval)
+	
+else:
+	print "Falsches argument"
