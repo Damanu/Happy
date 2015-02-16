@@ -18,6 +18,10 @@ path='/home/emanuel/Dropbox/Programmieren/Python/'
 #path='/home/emanuel/Git/Hub/Happy/'
 #filename='TestData'
 filename='Daten_Happy'
+config='Happy.config'
+
+#if not(os.path.isfile(path+config)): 		#check if filename exitst in path , if not create it
+ 	
 #filename='Daten_Happy_Eva'
 #Parameter
 now = datetime.datetime.now()
@@ -91,8 +95,12 @@ def ReadConfig():
 #Programm zum auslesen der Daten
 #Ausgabe: endval[index], index: 0=happy,1=health,2=stress,3=sporty,4=money,5=social,6=year,7=month,8=day,9=hour,10=minute,11=second
 def Read():
-	text = open(path+filename,'r')	#open file to read
-	data = text.read()		#safe file to string
+	try:
+		text = open(path+filename,'r+')	#open file to read
+		data = text.read()		#safe file to string
+	except:
+		print "Something went wrong, no Idea what!"
+		sys.exit()
 #	print data			#print string
 	datalen=12
 	datacount=0
