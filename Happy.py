@@ -18,6 +18,7 @@ path='/home/emanuel/Dropbox/Programmieren/Python/'
 #path='/home/emanuel/Git/Hub/Happy/'
 #filename='TestData'
 filename='Daten_Happy'
+#filename='Daten_Happy_Eva'
 #Parameter
 now = datetime.datetime.now()
 happy=-1		#subjektiv happines in % , 100% = very happy 
@@ -82,13 +83,17 @@ def WriteData():		#ungetestet, geht wsl nicht
 	text.write(bis+"\n"+str(happy)+" "+str(health)+" "+str(stress)+" "+str(sporty)+" "+str(money)+" "+str(social)+" "+str(now.year)+" "+str(now.month)+" "+str(now.day)+" "+str(now.hour)+" "+str(now.minute)+" "+str(now.second))	#write data to file 
 
 	
-	
+#Programm zum auslesen des Config files
+def ReadConfig():
+	text = open(path+Happy.config,'r')
+	data = text.read()
+	print data
 #Programm zum auslesen der Daten
 #Ausgabe: endval[index], index: 0=happy,1=health,2=stress,3=sporty,4=money,5=social,6=year,7=month,8=day,9=hour,10=minute,11=second
 def Read():
 	text = open(path+filename,'r')	#open file to read
 	data = text.read()		#safe file to string
-	print data			#print string
+#	print data			#print string
 	datalen=12
 	datacount=0
 	linecount=0
@@ -149,7 +154,9 @@ def Timestamps (endval):				#transform Date segments into string list of datetim
 		i+=1
 	print timearr
 	return timearr
-#Plotprogramme
+#Plotprogramm
+#input: the index wich list of endval should be taken, endval, the number of rows for subplot, the number of columns for subplot, the plot number for subplot, the Title of the subplot
+#Output: a matplotlib.pyplot.plot subplot 
 def plotdata(index,endval,row,col,num,title):
 	plot=plt.subplot(row,col,num)
 	plt.title(title)
@@ -158,9 +165,9 @@ def plotdata(index,endval,row,col,num,title):
 	#x=np.linspace(0,len(endval[0]),len(endval[0]))
 #	plt.gca().set_major_locator(matplotlib.dates.DayLocator())
 #	plt.gca().set_minor_locator(matplotlib.dates.HourLocator(arange(0,25,6)))
-	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))
-	plt.plot(x,endval[index])
-	plt.gcf().autofmt_xdate()
+	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))	#set format of Date at x-axis
+	plt.plot(x,endval[index])		
+	plt.gcf().autofmt_xdate()		#format x-axis for Date (diagonal)
 #	plt.show()
 	return plot
 
@@ -173,12 +180,14 @@ def plotdata(index,endval,row,col,num,title):
 #               -sp ... sporty einlesen
 #               -m ... money einlesen
 #               -so ... social einlesen
+#		-
 #               -plot -[option] ... plotmodus [option] gibt zu plotende daten an
 #                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
 #               - 
 
 #print sys.argv[1]
 plotarguments=["-h","-he","-st","-sp","-m","-so","-all"]
+arguments=["-all","-h","-he","-st","-sp","-m","-so","-chdata"] 
 #try sys.argv[1]
 if len(sys.argv)==1:
 	(happy,health,stress,sporty,money,social)=Input("a")
