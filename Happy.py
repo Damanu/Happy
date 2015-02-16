@@ -193,36 +193,52 @@ def plotdata(index,endval,row,col,num,title):
 #               -plot -[option] ... plotmodus [option] gibt zu plotende daten an
 #                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
 #               - 
-
-#print sys.argv[1]
-plotarguments=["-h","-he","-st","-sp","-m","-so","-all"]
-arguments=["-all","-h","-he","-st","-sp","-m","-so","-chdata"] 
-#try sys.argv[1]
-if len(sys.argv)==1:
-	(happy,health,stress,sporty,money,social)=Input("a")
-	WriteData()
-	endval=Read()
-elif sys.argv[1] == "plot":
-#		try sys.argv[2]
+def main(argv):
+	parser = OptionParser()
+	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nh happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
+	parser.add_option("--All","-A",help="starts the program (like default) asking you all the data possible")
+	parser.add_option("-H","--Happy",action="store",type="int",dest="argument",help="only intake is happy value")
+	parser.add_option("--He","--Health",action="store",type="int",dest="argument",help="only intake is health value")
+	parser.add_option("--St","--Stress",action="store",type="int",dest="argument",help="only intake is stress value")
+	parser.add_option("--Sp","--Sporty",action="store",type="int",dest="argument",help="only intake is sporty value")
+	parser.add_option("-M","--Money",action="store",type="int",dest="argument",help="only intake is money value")
+	parser.add_option("--So","--Social",action="store",type="int",dest="argument",help="only intake is social value")
+	
+	(options,args)=parser.parse_args()
+	print options.argument
+	print options
+	#print sys.argv[1]
+#	plotarguments=["ha","he","st","sp","m","so","all"]
+#	arguments=["-all","-h","-he","-st","-sp","-m","-so","-chdata"] 
+	#try sys.argv[1]
+	if len(sys.argv)==1:
+		(happy,health,stress,sporty,money,social)=Input("a")
+		WriteData()
 		endval=Read()
-		if sys.argv[2] == "-all":
-			i=0
-			while i < 6:
-				plotdata(i,endval,6,1,i+1,plotarguments[i])
-				i+=1
-		else:
-			argindex=plotarguments.index(sys.argv[2])
-			plotdata(argindex,endval,1,1,1,plotarguments[argindex])
-else:
-	print "wrong argument"
-#		except NameError:
-#			print "wrong second argument"
-#			sys.exit()
-#elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
-#	(happy,health,stress,sporty,money,social)=Input("a")
-#	WriteData()
-#	endval=Read()
-#	plotdata(int(sys.argv[1]),endval)
-plt.show()
-#except NameError:
-#	print "Falsches argument"
+	elif sys.argv[1] == "plot":
+	#		try sys.argv[2]
+			endval=Read()
+			if sys.argv[2] == "-all":
+				i=0
+				while i < 6:
+					plotdata(i,endval,6,1,i+1,plotarguments[i])
+					i+=1
+			else:
+				argindex=plotarguments.index(sys.argv[2])
+				plotdata(argindex,endval,1,1,1,plotarguments[argindex])
+	else:
+		print "wrong argument"
+	#		except NameError:
+	#			print "wrong second argument"
+	#			sys.exit()
+	#elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
+	#	(happy,health,stress,sporty,money,social)=Input("a")
+	#	WriteData()
+	#	endval=Read()
+	#	plotdata(int(sys.argv[1]),endval)
+	plt.show()
+	#except NameError:
+	#	print "Falsches argument"
+if __name__=="__main__":
+	main(sys.argv)
+	
