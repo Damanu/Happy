@@ -1,4 +1,5 @@
 from optparse import OptionParser
+import optparse
 import os				
 import datetime
 import numpy as np
@@ -194,22 +195,28 @@ def plotdata(index,endval,row,col,num,title):
 #                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
 #               - 
 def main(argv):
-	parser = OptionParser()
+	usage="	%prog [option] argument"
+	
+	parser = OptionParser(usage=usage)
 	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nh happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
-	parser.add_option("--All","-A",help="starts the program (like default) asking you all the data possible")
-	parser.add_option("-H","--Happy",action="store",type="int",dest="argument",help="only intake is happy value")
-	parser.add_option("--He","--Health",action="store",type="int",dest="argument",help="only intake is health value")
-	parser.add_option("--St","--Stress",action="store",type="int",dest="argument",help="only intake is stress value")
-	parser.add_option("--Sp","--Sporty",action="store",type="int",dest="argument",help="only intake is sporty value")
-	parser.add_option("-M","--Money",action="store",type="int",dest="argument",help="only intake is money value")
-	parser.add_option("--So","--Social",action="store",type="int",dest="argument",help="only intake is social value")
+	parser.add_option("--All","-A",action="store_true",help="starts the program (like default) asking you all the data possible")
+	parser.add_option("-H","--Happy",action="store",type="int",help="only intake is happy value")
+	parser.add_option("--Health","--He",action="store",type="int",help="only intake is health value")
+	parser.add_option("--Stress","--St",action="store",type="int",help="only intake is stress value")
+	parser.add_option("--Sporty","--Sp",action="store",type="int",help="only intake is sporty value")
+	parser.add_option("-M","--Money",action="store",type="int",help="only intake is money value")
+	parser.add_option("--Social","--So",action="store",type="int",help="only intake is social value")
 	
 	(options,args)=parser.parse_args()
-	print options.argument
-	print options
+	print args		
+	print options.get(arguments[0])	
+
 	#print sys.argv[1]
 #	plotarguments=["ha","he","st","sp","m","so","all"]
-#	arguments=["-all","-h","-he","-st","-sp","-m","-so","-chdata"] 
+	arguments=["All","Happy","Health","Stress","Sporty","Money","Social","-chdata"]
+#	print options.arguments[0]
+#	for x in arguments:
+#		options 
 	#try sys.argv[1]
 	if len(sys.argv)==1:
 		(happy,health,stress,sporty,money,social)=Input("a")
