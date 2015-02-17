@@ -1,3 +1,4 @@
+#/usr/bin/python
 from optparse import OptionParser
 import optparse
 import os				
@@ -18,8 +19,8 @@ import sys
 path='/home/emanuel/Dropbox/Programmieren/Python/'
 
 #path='/home/emanuel/Git/Hub/Happy/'
-#filename='TestData'
-filename='Daten_Happy'
+filename='TestData'
+#filename='Daten_Happy'
 config='Happy.config'
 
 #if not(os.path.isfile(path+config)): 		#check if filename exitst in path , if not create it
@@ -82,26 +83,26 @@ def Input(option):	#Input programm , gibt eingegebene werte aus
 		return(happy,health,stress,sporty,money,social)
 	#elif option == b: #weitere Optionen folgen
 
-def WriteData():		#ungetestet, geht wsl nicht
+def WriteData(datalist):		#ungetestet, geht wsl nicht
 	text = open(path+filename,'r') #open file to read
 	bis =text.read()		#save file to string
 	text = open(path+filename,'w')	#open filen to write
-	text.write(bis+"\n"+str(happy)+" "+str(health)+" "+str(stress)+" "+str(sporty)+" "+str(money)+" "+str(social)+" "+str(now.year)+" "+str(now.month)+" "+str(now.day)+" "+str(now.hour)+" "+str(now.minute)+" "+str(now.second))	#write data to file 
+	text.write(bis+"\n"+str(datalist[0])+" "+str(datalist[1])+" "+str(datalist[2])+" "+str(datalist[3])+" "+str(datalist[4])+" "+str(datalist[5])+" "+str(now.year)+" "+str(now.month)+" "+str(now.day)+" "+str(now.hour)+" "+str(now.minute)+" "+str(now.second))	#write data to file 
 
 	
 #Programm zum auslesen des Config files
 def ReadConfig():
 	text = open(path+Happy.config,'r')
 	data = text.read()
-	print data
+#	print data
 #Programm zum auslesen der Daten
 #Ausgabe: endval[index], index: 0=happy,1=health,2=stress,3=sporty,4=money,5=social,6=year,7=month,8=day,9=hour,10=minute,11=second
 def Read():
 	try:
-		text = open(path+filename,'r+')	#open file to read
+		text = open(path+filename,'r')	#open file to read
 		data = text.read()		#safe file to string
 	except:
-		print "Something went wrong, no Idea what!"
+		print 'Something went wrong, no Idea what'
 		sys.exit()
 #	print data			#print string
 	datalen=12
@@ -199,20 +200,39 @@ def main(argv):
 	
 	parser = OptionParser(usage=usage)
 	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nh happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
-	parser.add_option("--All","-A",action="store_true",help="starts the program (like default) asking you all the data possible")
-	parser.add_option("-H","--Happy",action="store",type="int",help="only intake is happy value")
-	parser.add_option("--Health","--He",action="store",type="int",help="only intake is health value")
-	parser.add_option("--Stress","--St",action="store",type="int",help="only intake is stress value")
-	parser.add_option("--Sporty","--Sp",action="store",type="int",help="only intake is sporty value")
-	parser.add_option("-M","--Money",action="store",type="int",help="only intake is money value")
-	parser.add_option("--Social","--So",action="store",type="int",help="only intake is social value")
+	parser.add_option("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
+	parser.add_option("-H","--Happy",action="store",dest="happy",type="int",help="only intake is happy value")
+	parser.add_option("--Health","--He",action="store",dest="health",type="int",help="only intake is health value")
+	parser.add_option("--Stress","--St",action="store",dest="stress",type="int",help="only intake is stress value")
+	parser.add_option("--Sporty","--Sp",action="store",dest="sporty",type="int",help="only intake is sporty value")
+	parser.add_option("-M","--Money",action="store",dest="money",type="int",help="only intake is money value")
+	parser.add_option("--Social","--So",action="store",dest="social",type="int",help="only intake is social value")
 	
 	(options,args)=parser.parse_args()
 	print args		
-	print options.get(arguments[0])	
-
+#	print options.get(arguments[0])	
+	plotarguments=["ha","he","st","sp","m","so","all"]
+	happy=options.happy
+	health=options.health
+	sporty=options.sporty
+	stress=options.stress
+	money=options.money
+	social=options.social
+	if options.All:								#if option all  was set, take data and write to file
+		datalist=Input("a")
+		WriteData(datalist)
+	
+	if plotarguments.count(options.plotargument):				#if plotarguments list has argument of Plotoption in it, plot the given arguments diagramm
+		endval=Read()
+		if options.plotargument == "all":
+			i=0
+			while i < 6:
+				plotdata(i,endval,6,1,i+1,plotarguments[i])
+				i+=1
+		else:
+			argindex=plotarguments.index(options.plotargument) 
+			plotdata(argindex,endval,1,1,1,plotarguments[argindex])
 	#print sys.argv[1]
-#	plotarguments=["ha","he","st","sp","m","so","all"]
 	arguments=["All","Happy","Health","Stress","Sporty","Money","Social","-chdata"]
 #	print options.arguments[0]
 #	for x in arguments:
