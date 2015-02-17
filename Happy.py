@@ -112,8 +112,8 @@ def Read():
 	datapoint=0
 	rowvalues=[]
 	values=[]
-	for x in data[:]:
-		if data[datacount] == '\n':	
+	for x in data[:]:				#as long as there are values in data
+		if data[datacount] == '\n':		#check if new line
 		#	print datapoint
 		#	print datacount
 		#	print len(data)
@@ -130,12 +130,18 @@ def Read():
 		elif data[datacount] != " ":					#wenn kein leerzeichen dann weiterzaehlen
 			datacount+=1						
 		elif data[datacount] == " ":					#wenn lehrzeichen dann 
-			rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
+			if data[datapoint:datacount]!="None":				#ask if there is a value at this point
+				rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
+			else:
+				rowvalues.append(np.nan)					#if not save 
 			datacount+=1						#zeichencounter hoch 
 			datapoint=datacount					#speicherstelle setzen
 		#	wordcount++						#wortzaehler erhoehen
 	if datacount != datapoint:
+	#	if data[datapoint:datacount]!="None":				#ask if there is a value at this point
 		rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
+	#	else:
+	#		rowvalues.append(np.nan)					#if not save 
 	if len(rowvalues) == datalen:
 		values.append(rowvalues)				#Zeile anfuegen
 									#wenn neue zeile
@@ -199,14 +205,14 @@ def main(argv):
 	usage="	%prog [option] argument"
 	
 	parser = OptionParser(usage=usage)
-	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nh happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
+	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nha happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
 	parser.add_option("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
-	parser.add_option("-H","--Happy",action="store",dest="happy",type="int",help="only intake is happy value")
-	parser.add_option("--Health","--He",action="store",dest="health",type="int",help="only intake is health value")
-	parser.add_option("--Stress","--St",action="store",dest="stress",type="int",help="only intake is stress value")
-	parser.add_option("--Sporty","--Sp",action="store",dest="sporty",type="int",help="only intake is sporty value")
-	parser.add_option("-M","--Money",action="store",dest="money",type="int",help="only intake is money value")
-	parser.add_option("--Social","--So",action="store",dest="social",type="int",help="only intake is social value")
+	parser.add_option("-H","--Happy",default=None,action="store",dest="happy",type="int",help="only intake is happy value")
+	parser.add_option("--Health","--He",default=None,action="store",dest="health",type="int",help="only intake is health value")
+	parser.add_option("--Stress","--St",default=None,action="store",dest="stress",type="int",help="only intake is stress value")
+	parser.add_option("--Sporty","--Sp",default=None,action="store",dest="sporty",type="int",help="only intake is sporty value")
+	parser.add_option("-M","--Money",default=None,action="store",dest="money",type="int",help="only intake is money value")
+	parser.add_option("--Social","--So",default=None,action="store",dest="social",type="int",help="only intake is social value")
 	
 	(options,args)=parser.parse_args()
 	print args		
@@ -218,10 +224,14 @@ def main(argv):
 	stress=options.stress
 	money=options.money
 	social=options.social
+	datalist=[happy,health,stress,sporty,money,social]
 	if options.All:								#if option all  was set, take data and write to file
 		datalist=Input("a")
 		WriteData(datalist)
-	
+	for x in datalist :
+		if x!=None:  
+			WriteData(datalist)
+			print "in elif"
 	if plotarguments.count(options.plotargument):				#if plotarguments list has argument of Plotoption in it, plot the given arguments diagramm
 		endval=Read()
 		if options.plotargument == "all":
@@ -233,7 +243,7 @@ def main(argv):
 			argindex=plotarguments.index(options.plotargument) 
 			plotdata(argindex,endval,1,1,1,plotarguments[argindex])
 	#print sys.argv[1]
-	arguments=["All","Happy","Health","Stress","Sporty","Money","Social","-chdata"]
+	#arguments=["All","Happy","Health","Stress","Sporty","Money","Social","-chdata"]
 #	print options.arguments[0]
 #	for x in arguments:
 #		options 
