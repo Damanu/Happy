@@ -174,7 +174,7 @@ def Timestamps (endval):				#transform Date segments into string list of datetim
 #Plotprogramm
 #input: the index wich list of endval should be taken, endval, the number of rows for subplot, the number of columns for subplot, the plot number for subplot, the Title of the subplot
 #Output: a matplotlib.pyplot.plot subplot 
-def plotdata(index,endval,row,col,num,title):
+def plotdata(index,endval,sign,row,col,num,title):
 	plot=plt.subplot(row,col,num)
 	plt.title(title)
 	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S") for d in Timestamps(endval)]
@@ -183,7 +183,7 @@ def plotdata(index,endval,row,col,num,title):
 #	plt.gca().set_major_locator(matplotlib.dates.DayLocator())
 #	plt.gca().set_minor_locator(matplotlib.dates.HourLocator(arange(0,25,6)))
 	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))	#set format of Date at x-axis
-	plt.plot(x,endval[index])		
+	plt.plot(x,endval[index],sign)		
 	plt.gcf().autofmt_xdate()		#format x-axis for Date (diagonal)
 #	plt.show()
 	return plot
@@ -202,8 +202,9 @@ def plotdata(index,endval,row,col,num,title):
 #                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
 #               - 
 def main(argv):
-	usage="	%prog [option] argument"
+	usage="	%prog [option] argument"		#define Usage message
 	
+#-----------------------option configurations----------------------------------------------
 	parser = OptionParser(usage=usage)
 	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nha happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
 	parser.add_option("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
@@ -213,69 +214,39 @@ def main(argv):
 	parser.add_option("--Sporty","--Sp",default=None,action="store",dest="sporty",type="int",help="only intake is sporty value")
 	parser.add_option("-M","--Money",default=None,action="store",dest="money",type="int",help="only intake is money value")
 	parser.add_option("--Social","--So",default=None,action="store",dest="social",type="int",help="only intake is social value")
-	
 	(options,args)=parser.parse_args()
-	print args		
-#	print options.get(arguments[0])	
-	plotarguments=["ha","he","st","sp","m","so","all"]
+#---------------------------------------------------------------------------------------------
+			
+	plotarguments=["ha","he","st","sp","m","so","all"]		#list of arguments for -Plot or -P command
+
+	#save arguments of single data input options
 	happy=options.happy
 	health=options.health
 	sporty=options.sporty
 	stress=options.stress
 	money=options.money
 	social=options.social
-	datalist=[happy,health,stress,sporty,money,social]
-	if options.All:								#if option all  was set, take data and write to file
-		datalist=Input("a")
+	datalist=[happy,health,stress,sporty,money,social]		#save input to list
+	
+	if options.All or len(sys.argv)==1:			#if option all  was set, take data and write to file
+		datalist=Input("a")		#save new input to datalist
 		WriteData(datalist)
-	for x in datalist :
+	for x in datalist :			#find out if single input was chosen and save the data to the data file
 		if x!=None:  
 			WriteData(datalist)
-			print "in elif"
-	if plotarguments.count(options.plotargument):				#if plotarguments list has argument of Plotoption in it, plot the given arguments diagramm
-		endval=Read()
-		if options.plotargument == "all":
+	if plotarguments.count(options.plotargument):		#if plotarguments list has argument of Plotoption in it, plot the given arguments diagramm
+		endval=Read()					#read data file
+		if options.plotargument == "all":		#first ask if the plotargument is all and if plot all datalists
 			i=0
 			while i < 6:
-				plotdata(i,endval,6,1,i+1,plotarguments[i])
+				plotdata(i,endval,'o',6,1,i+1,plotarguments[i])
+				plotdata(i,endval,'-',6,1,i+1,plotarguments[i])
 				i+=1
-		else:
-			argindex=plotarguments.index(options.plotargument) 
-			plotdata(argindex,endval,1,1,1,plotarguments[argindex])
-	#print sys.argv[1]
-	#arguments=["All","Happy","Health","Stress","Sporty","Money","Social","-chdata"]
-#	print options.arguments[0]
-#	for x in arguments:
-#		options 
-	#try sys.argv[1]
-	if len(sys.argv)==1:
-		(happy,health,stress,sporty,money,social)=Input("a")
-		WriteData()
-		endval=Read()
-	elif sys.argv[1] == "plot":
-	#		try sys.argv[2]
-			endval=Read()
-			if sys.argv[2] == "-all":
-				i=0
-				while i < 6:
-					plotdata(i,endval,6,1,i+1,plotarguments[i])
-					i+=1
-			else:
-				argindex=plotarguments.index(sys.argv[2])
-				plotdata(argindex,endval,1,1,1,plotarguments[argindex])
-	else:
-		print "wrong argument"
-	#		except NameError:
-	#			print "wrong second argument"
-	#			sys.exit()
-	#elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
-	#	(happy,health,stress,sporty,money,social)=Input("a")
-	#	WriteData()
-	#	endval=Read()
-	#	plotdata(int(sys.argv[1]),endval)
+		else:						#if not plot the chosen data
+			argindex=plotarguments.index(options.plotargument) 	#find out the index of the chosen plotargument in the plotargumentlist
+			plotdata(argindex,endval,'o',1,1,1,plotarguments[argindex])		#plot the data to this argument
+			plotdata(argindex,endval,'-',1,1,1,plotarguments[argindex])		#plot the data to this argument
 	plt.show()
-	#except NameError:
-	#	print "Falsches argument"
 if __name__=="__main__":
 	main(sys.argv)
 	
