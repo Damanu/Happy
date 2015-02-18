@@ -202,12 +202,18 @@ def plotdata(index,endval,sign,row,col,num,title):
 #		-
 #               -plot -[option] ... plotmodus [option] gibt zu plotende daten an
 #                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
-#               - 
+#
+
+#Class exists only to declare options for namespace, this is neede for argparse
+class C(object):
+	pass 
+
+#------------------------------------------MAIN Program------------------------------------------------------------------------
 def main(argv):
-	usage="	%prog [option] argument"		#define Usage message
+#	usage="	%prog [option] argument"		#define Usage message
 	
 #-----------------------option configurations----------------------------------------------
-	parser = ArgumentParser(usage=usage)
+	parser = ArgumentParser()
 	parser.add_argument("--Plot","-P",action="store",type=str,dest="plotargument",help="plot data for given argument \narguments are:\nha happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
 	parser.add_argument("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
 	parser.add_argument("-H","--Happy",default=None,action="store",dest="happy",type=int,help="only intake is happy value")
@@ -216,7 +222,8 @@ def main(argv):
 	parser.add_argument("--Sporty","--Sp",default=None,action="store",dest="sporty",type=int,help="only intake is sporty value")
 	parser.add_argument("-M","--Money",default=None,action="store",dest="money",type=int,help="only intake is money value")
 	parser.add_argument("--Social","--So",default=None,action="store",dest="social",type=int,help="only intake is social value")
-	(options,args)=parser.parse_args()
+	options=C()
+	args=parser.parse_args(namespace=options)
 #---------------------------------------------------------------------------------------------
 			
 	plotarguments=["ha","he","st","sp","m","so","all"]		#list of arguments for -Plot or -P command
