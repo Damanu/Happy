@@ -1,6 +1,8 @@
 #/usr/bin/python
 from optparse import OptionParser
 import optparse
+import argparse
+from argparse import ArgumentParser
 import os				
 import datetime
 import numpy as np
@@ -205,15 +207,15 @@ def main(argv):
 	usage="	%prog [option] argument"		#define Usage message
 	
 #-----------------------option configurations----------------------------------------------
-	parser = OptionParser(usage=usage)
-	parser.add_option("--Plot","-P",action="store",type="string",dest="plotargument",help="plot data for given argument \narguments are:\nha happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
-	parser.add_option("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
-	parser.add_option("-H","--Happy",default=None,action="store",dest="happy",type="int",help="only intake is happy value")
-	parser.add_option("--Health","--He",default=None,action="store",dest="health",type="int",help="only intake is health value")
-	parser.add_option("--Stress","--St",default=None,action="store",dest="stress",type="int",help="only intake is stress value")
-	parser.add_option("--Sporty","--Sp",default=None,action="store",dest="sporty",type="int",help="only intake is sporty value")
-	parser.add_option("-M","--Money",default=None,action="store",dest="money",type="int",help="only intake is money value")
-	parser.add_option("--Social","--So",default=None,action="store",dest="social",type="int",help="only intake is social value")
+	parser = ArgumentParser(usage=usage)
+	parser.add_argument("--Plot","-P",action="store",type=str,dest="plotargument",help="plot data for given argument \narguments are:\nha happy,\nhe health,\nst stress,\nsp sporty,\nm money,\nso social,\nall plot all data in several diagramms")
+	parser.add_argument("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
+	parser.add_argument("-H","--Happy",default=None,action="store",dest="happy",type=int,help="only intake is happy value")
+	parser.add_argument("--Health","--He",default=None,action="store",dest="health",type=int,help="only intake is health value")
+	parser.add_argument("--Stress","--St",default=None,action="store",dest="stress",type=int,help="only intake is stress value")
+	parser.add_argument("--Sporty","--Sp",default=None,action="store",dest="sporty",type=int,help="only intake is sporty value")
+	parser.add_argument("-M","--Money",default=None,action="store",dest="money",type=int,help="only intake is money value")
+	parser.add_argument("--Social","--So",default=None,action="store",dest="social",type=int,help="only intake is social value")
 	(options,args)=parser.parse_args()
 #---------------------------------------------------------------------------------------------
 			
