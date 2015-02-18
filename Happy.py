@@ -1,3 +1,8 @@
+#/usr/bin/python
+from optparse import OptionParser
+import optparse
+import argparse
+from argparse import ArgumentParser
 import os				
 import datetime
 import numpy as np
@@ -16,8 +21,8 @@ import sys
 path='/home/emanuel/Dropbox/Programmieren/Python/'
 
 #path='/home/emanuel/Git/Hub/Happy/'
-#filename='TestData'
-filename='Daten_Happy'
+filename='TestData'
+#filename='Daten_Happy'
 config='Happy.config'
 
 #if not(os.path.isfile(path+config)): 		#check if filename exitst in path , if not create it
@@ -80,26 +85,26 @@ def Input(option):	#Input programm , gibt eingegebene werte aus
 		return(happy,health,stress,sporty,money,social)
 	#elif option == b: #weitere Optionen folgen
 
-def WriteData():		#ungetestet, geht wsl nicht
+def WriteData(datalist):		#ungetestet, geht wsl nicht
 	text = open(path+filename,'r') #open file to read
 	bis =text.read()		#save file to string
 	text = open(path+filename,'w')	#open filen to write
-	text.write(bis+"\n"+str(happy)+" "+str(health)+" "+str(stress)+" "+str(sporty)+" "+str(money)+" "+str(social)+" "+str(now.year)+" "+str(now.month)+" "+str(now.day)+" "+str(now.hour)+" "+str(now.minute)+" "+str(now.second))	#write data to file 
+	text.write(bis+"\n"+str(datalist[0])+" "+str(datalist[1])+" "+str(datalist[2])+" "+str(datalist[3])+" "+str(datalist[4])+" "+str(datalist[5])+" "+str(now.year)+" "+str(now.month)+" "+str(now.day)+" "+str(now.hour)+" "+str(now.minute)+" "+str(now.second))	#write data to file 
 
 	
 #Programm zum auslesen des Config files
 def ReadConfig():
 	text = open(path+Happy.config,'r')
 	data = text.read()
-	print data
+#	print data
 #Programm zum auslesen der Daten
 #Ausgabe: endval[index], index: 0=happy,1=health,2=stress,3=sporty,4=money,5=social,6=year,7=month,8=day,9=hour,10=minute,11=second
 def Read():
 	try:
-		text = open(path+filename,'r+')	#open file to read
+		text = open(path+filename,'r')	#open file to read
 		data = text.read()		#safe file to string
 	except:
-		print "Something went wrong, no Idea what!"
+		print 'Something went wrong at %argv[0] subprogram Read() while reading the datafile'
 		sys.exit()
 #	print data			#print string
 	datalen=12
@@ -109,8 +114,8 @@ def Read():
 	datapoint=0
 	rowvalues=[]
 	values=[]
-	for x in data[:]:
-		if data[datacount] == '\n':	
+	for x in data[:]:				#as long as there are values in data
+		if data[datacount] == '\n':		#check if new line
 		#	print datapoint
 		#	print datacount
 		#	print len(data)
@@ -127,12 +132,18 @@ def Read():
 		elif data[datacount] != " ":					#wenn kein leerzeichen dann weiterzaehlen
 			datacount+=1						
 		elif data[datacount] == " ":					#wenn lehrzeichen dann 
-			rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
+			if data[datapoint:datacount]!="None":				#ask if there is a value at this point
+				rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
+			else:
+				rowvalues.append(np.nan)					#if not save 
 			datacount+=1						#zeichencounter hoch 
 			datapoint=datacount					#speicherstelle setzen
 		#	wordcount++						#wortzaehler erhoehen
 	if datacount != datapoint:
+	#	if data[datapoint:datacount]!="None":				#ask if there is a value at this point
 		rowvalues.append(int(data[datapoint:datacount]))	#rowvalues are the values to one date, wert speichern
+	#	else:
+	#		rowvalues.append(np.nan)					#if not save 
 	if len(rowvalues) == datalen:
 		values.append(rowvalues)				#Zeile anfuegen
 									#wenn neue zeile
@@ -165,7 +176,7 @@ def Timestamps (endval):				#transform Date segments into string list of datetim
 #Plotprogramm
 #input: the index wich list of endval should be taken, endval, the number of rows for subplot, the number of columns for subplot, the plot number for subplot, the Title of the subplot
 #Output: a matplotlib.pyplot.plot subplot 
-def plotdata(index,endval,row,col,num,title):
+def plotdata(index,endval,sign,row,col,num,title):
 	plot=plt.subplot(row,col,num)
 	plt.title(title)
 	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S") for d in Timestamps(endval)]
@@ -174,7 +185,7 @@ def plotdata(index,endval,row,col,num,title):
 #	plt.gca().set_major_locator(matplotlib.dates.DayLocator())
 #	plt.gca().set_minor_locator(matplotlib.dates.HourLocator(arange(0,25,6)))
 	plt.gca().xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%d.%m.%Y-%H:%M:%S"))	#set format of Date at x-axis
-	plt.plot(x,endval[index])		
+	plt.plot(x,endval[index],sign)		
 	plt.gcf().autofmt_xdate()		#format x-axis for Date (diagonal)
 #	plt.show()
 	return plot
@@ -191,37 +202,71 @@ def plotdata(index,endval,row,col,num,title):
 #		-
 #               -plot -[option] ... plotmodus [option] gibt zu plotende daten an
 #                       zu -plot: [options]: -h happy, -he health, -st stress, -sp sporty, -m money, -so social, -all plot all data in several diagramms
-#               - 
+#
 
-#print sys.argv[1]
-plotarguments=["-h","-he","-st","-sp","-m","-so","-all"]
-arguments=["-all","-h","-he","-st","-sp","-m","-so","-chdata"] 
-#try sys.argv[1]
-if len(sys.argv)==1:
-	(happy,health,stress,sporty,money,social)=Input("a")
-	WriteData()
-	endval=Read()
-elif sys.argv[1] == "plot":
-#		try sys.argv[2]
-		endval=Read()
-		if sys.argv[2] == "-all":
+#Class exists only to declare options for namespace, this is neede for argparse
+class C(object):
+	pass 
+
+#defining function for new type to get the errormessage dont show every value between 0 and 100 
+	#reference: http://stackoverflow.com/questions/25295487/python-argparse-value-range-help-message-appearance
+def range_type(astr, min=0, max=100):
+    value = int(astr)
+    if min<= value <= max:
+        return value
+    else:
+        raise argparse.ArgumentTypeError('value not in range %s-%s'%(min,max))
+
+
+#------------------------------------------MAIN Program------------------------------------------------------------------------
+def main(argv):
+#	usage="	%prog [option] argument"		#define Usage message
+	
+#-----------------------option configurations----------------------------------------------
+	plotarguments=["ha","he","st","sp","m","so","all"]		#list of arguments for -Plot or -P command
+	inputrange=range(0,101)
+	parser = ArgumentParser()
+	parser.add_argument("--Plot","-P",action="store",type=str,dest="plotargument",choices=plotarguments,help="plot data for given argument arguments are:ha happy,he health,st stress,sp sporty,m money,so social,all plot all data in several diagramms")
+	parser.add_argument("--All","-A",action="store_true",default=False,help="starts the program (like default) asking you all the data possible")
+	parser.add_argument("-H","--Happy",default=None,action="store",dest="happy",type=range_type,metavar="[0-100]",choices=inputrange,help="only intake is happy value")
+	parser.add_argument("--Health","--He",default=None,action="store",dest="health",type=range_type,metavar="[0-100]",choices=inputrange,help="only intake is health value")
+	parser.add_argument("--Stress","--St",default=None,action="store",dest="stress",type=range_type,metavar="[0-100]",choices=inputrange,help="only intake is stress value")
+	parser.add_argument("--Sporty","--Sp",default=None,action="store",dest="sporty",type=range_type,metavar="[0-100]",choices=inputrange,help="only intake is sporty value")
+	parser.add_argument("-M","--Money",default=None,action="store",dest="money",type=range_type,metavar="[0-100]",choices=inputrange,help="only intake is money value")
+	parser.add_argument("--Social","--So",default=None,action="store",dest="social",type=range_type,metavar="[0-100]",choices=inputrange,help="only intake is social value")
+	options=C()
+	args=parser.parse_args(namespace=options)
+#---------------------------------------------------------------------------------------------
+			
+
+	#save arguments of single data input options
+	happy=options.happy
+	health=options.health
+	sporty=options.sporty
+	stress=options.stress
+	money=options.money
+	social=options.social
+	datalist=[happy,health,stress,sporty,money,social]		#save input to list
+	
+	if options.All or len(sys.argv)==1:			#if option all  was set, take data and write to file
+		datalist=Input("a")		#save new input to datalist
+		WriteData(datalist)
+	for x in datalist :			#find out if single input was chosen and save the data to the data file
+		if x!=None:  
+			WriteData(datalist)
+	if plotarguments.count(options.plotargument):		#if plotarguments list has argument of Plotoption in it, plot the given arguments diagramm
+		endval=Read()					#read data file
+		if options.plotargument == "all":		#first ask if the plotargument is all and if plot all datalists
 			i=0
 			while i < 6:
-				plotdata(i,endval,6,1,i+1,plotarguments[i])
+				plotdata(i,endval,'o',6,1,i+1,plotarguments[i])
+				plotdata(i,endval,'-',6,1,i+1,plotarguments[i])
 				i+=1
-		else:
-			argindex=plotarguments.index(sys.argv[2])
-			plotdata(argindex,endval,1,1,1,plotarguments[argindex])
-else:
-	print "wrong argument"
-#		except NameError:
-#			print "wrong second argument"
-#			sys.exit()
-#elif int(sys.argv[1]) >= 0 and int(sys.argv[1]) < 6:
-#	(happy,health,stress,sporty,money,social)=Input("a")
-#	WriteData()
-#	endval=Read()
-#	plotdata(int(sys.argv[1]),endval)
-plt.show()
-#except NameError:
-#	print "Falsches argument"
+		else:						#if not plot the chosen data
+			argindex=plotarguments.index(options.plotargument) 	#find out the index of the chosen plotargument in the plotargumentlist
+			plotdata(argindex,endval,'o',1,1,1,plotarguments[argindex])		#plot the data to this argument
+			plotdata(argindex,endval,'-',1,1,1,plotarguments[argindex])		#plot the data to this argument
+	plt.show()
+if __name__=="__main__":
+	main(sys.argv)
+	
