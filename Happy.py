@@ -21,13 +21,13 @@ import sys
 path='/home/emanuel/Dropbox/Programmieren/Python/'
 
 #path='/home/emanuel/Git/Hub/Happy/'
-filename='TestData'
-#filename='Daten_Happy'
+#filename='TestData'
+filename='Daten_Happy'
+#filename='Daten_Happy_Eva'
 config='Happy.config'
 
 #if not(os.path.isfile(path+config)): 		#check if filename exitst in path , if not create it
  	
-#filename='Daten_Happy_Eva'
 #Parameter
 now = datetime.datetime.now()
 happy=-1		#subjektiv happines in % , 100% = very happy 
@@ -147,7 +147,7 @@ def Read():
 	if len(rowvalues) == datalen:
 		values.append(rowvalues)				#Zeile anfuegen
 									#wenn neue zeile
-	print values
+#	print values
 	mesure=[]
 	endval=[]
 	i=0
@@ -161,7 +161,7 @@ def Read():
 		endval.append(mesure)
 		mesure=[]
 		ii+=1
-	print endval
+#	print endval
 	return endval					#return all the data in an array that has list in it as follows: [happy,health,stress,sport,money,social,year,month,day,hour,minute,second]
 
 
@@ -171,7 +171,7 @@ def Timestamps (endval):				#transform Date segments into string list of datetim
 	for x in endval[6]:
 		timearr.append(str(endval[6][i])+":"+str(endval[7][i])+":"+str(endval[8][i])+":"+str(endval[9][i])+":"+str(endval[10][i])+":"+str(endval[11][i]))
 		i+=1
-	print timearr
+#	print timearr
 	return timearr
 #Plotprogramm
 #input: the index wich list of endval should be taken, endval, the number of rows for subplot, the number of columns for subplot, the plot number for subplot, the Title of the subplot
@@ -180,7 +180,7 @@ def plotdata(index,endval,sign,row,col,num,title):
 	plot=plt.subplot(row,col,num)
 	plt.title(title)
 	x = [datetime.datetime.strptime(d,"%Y:%m:%d:%H:%M:%S") for d in Timestamps(endval)]
-	print x
+#	print x
 	#x=np.linspace(0,len(endval[0]),len(endval[0]))
 #	plt.gca().set_major_locator(matplotlib.dates.DayLocator())
 #	plt.gca().set_minor_locator(matplotlib.dates.HourLocator(arange(0,25,6)))
