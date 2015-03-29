@@ -251,9 +251,10 @@ def main(argv):
 	if options.All or len(sys.argv)==1:			#if option all  was set, take data and write to file
 		datalist=Input("a")		#save new input to datalist
 		WriteData(datalist)
-	for x in datalist :			#find out if single input was chosen and save the data to the data file
-		if x!=None:  
-			WriteData(datalist)
+	else :
+		for x in datalist :			#find out if single input was chosen and save the data to the data file
+			if x!=None:  
+				WriteData(datalist)
 	if plotarguments.count(options.plotargument):		#if plotarguments list has argument of Plotoption in it, plot the given arguments diagramm
 		endval=Read()					#read data file
 		if options.plotargument == "all":		#first ask if the plotargument is all and if plot all datalists
